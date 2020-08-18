@@ -1,14 +1,33 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import Video from "./Video";
+import db from "./firebase";
 
 function App() {
+  const [videos, setVideos] = useState([]);
+
+  useEffect(() => {
+    db.collection("posts").onSnapshot(snapshot =>
+      setVideos(snapshot.docs.map(doc => doc.data()))
+    );
+  }, []);
+
   return (
     <div className="App">
       <div className="app__videos">
-        <Video />
-        <Video />
-        <Video />
+        {videos.map(
+          ({ url, channel, description, song, likes, shares, messages }) => (
+            <Video
+              url={url}
+              channel={channel}
+              description={description}
+              song={song}
+              likes={likes}
+              shares={shares}
+              messages={messages}
+            />
+          )
+        )}
       </div>
     </div>
   );
